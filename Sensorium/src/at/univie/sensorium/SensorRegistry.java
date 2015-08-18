@@ -51,8 +51,10 @@ public class SensorRegistry {
 	private int bufferedLines = 0;
 	private static final int MAXDEBUGLINES = 20;
 	private TextView textoutput;
-	
+
+	//Context from SensorService
 	private Context context;
+	//set from SensorService
 	private Preferences preferences;
 
 	private JSONLogger jsonlogger;
@@ -70,6 +72,7 @@ public class SensorRegistry {
 		return instance;
 	}
 
+	//the Context is the SensorService Context
 	public void startup(Context context) {
 		this.context = context;
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);

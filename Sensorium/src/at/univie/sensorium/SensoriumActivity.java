@@ -41,17 +41,26 @@ import at.univie.sensorium.sensors.AbstractSensor;
 
 public class SensoriumActivity extends Activity {
 
+	//list adapter for sensor data
+	/*However the TextView is referenced, it will be filled with the toString() of each object in the array.
+	 You can add lists or arrays of custom objects.
+	 Override the toString() method of your objects to determine what text will be displayed for the item in the list.
+
+	 */
 	private ArrayAdapter<AbstractSensor> listAdapter;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		//relative layout, list view, text fields
 		setContentView(R.layout.seattle_sensors_main);
 		//SensorServiceSingleton.getInstance().bindService(this);
 
 		ListView sensorViewList = (ListView) findViewById(R.id.sensorValues);
+		// registry of sensors, singleton
 		List<AbstractSensor> sensors = SensorRegistry.getInstance().getSensors();
 		listAdapter = new SensorViewArrayAdapter(this, sensors);
+		//ListView gets the data from the associated listAdapter
 		sensorViewList.setAdapter(listAdapter);
 		
 		
