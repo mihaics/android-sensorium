@@ -3,6 +3,7 @@ package at.univie.sensorium.logging;
 import android.content.Context;
 
 import org.eclipse.paho.android.service.MqttAndroidClient;
+import org.eclipse.paho.client.mqttv3.MqttException;
 
 import java.util.List;
 
@@ -21,6 +22,8 @@ public class MqttLogger implements SensorChangeListener {
     private CloudConfig quickconfig;
     private MqttAndroidClient client;
     private Context  mContext;
+    boolean doConnect = true;
+
     public MqttLogger(){
 
     }
@@ -32,7 +35,10 @@ public class MqttLogger implements SensorChangeListener {
     private void init() {
         quickconfig = initPrefsWithIBMQuickStart();
         mContext = SensorRegistry.getInstance().getContext();
-        client = createClient(mContext, quickconfig.brokerAddress+":"+quickconfig.brokerPort, quickconfig.deviceId);
+        client = createClient(mContext, quickconfig.brokerAddress + ":" + quickconfig.brokerPort, quickconfig.deviceId);
+
+
+
 
         for (AbstractSensor sensor : sensors) {
             sensor.addListener(this);
