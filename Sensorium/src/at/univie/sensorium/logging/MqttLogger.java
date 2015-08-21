@@ -2,14 +2,17 @@ package at.univie.sensorium.logging;
 
 import android.content.Context;
 
+import com.google.gson.Gson;
+
 import org.eclipse.paho.android.service.MqttAndroidClient;
-import org.eclipse.paho.client.mqttv3.MqttException;
+
 
 import java.util.List;
 
 import at.univie.sensorium.SensorRegistry;
 import at.univie.sensorium.sensors.AbstractSensor;
 import at.univie.sensorium.sensors.SensorChangeListener;
+import at.univie.sensorium.sensors.SensorValue;
 import mqtt.CloudConfig;
 
 /**
@@ -47,6 +50,17 @@ public class MqttLogger implements SensorChangeListener {
 
     @Override
     public void sensorUpdated(AbstractSensor sensor) {
+
+    }
+
+    private void sendSensorData(AbstractSensor sensor){
+        List<SensorValue> valuelist = sensor.getSensorValues();
+        //check valuelist size
+        String json = new Gson().toJson(valuelist );
+
+
+
+
 
     }
 
