@@ -34,6 +34,7 @@ import android.util.Log;
 import android.widget.TextView;
 import at.univie.sensorium.extinterfaces.XMLRPCSensorServerThread;
 import at.univie.sensorium.logging.JSONLogger;
+import at.univie.sensorium.logging.MqttLogger;
 import at.univie.sensorium.preferences.Preferences;
 import at.univie.sensorium.privacy.Privacy;
 import at.univie.sensorium.sensors.AbstractSensor;
@@ -58,6 +59,10 @@ public class SensorRegistry {
 	private Preferences preferences;
 
 	private JSONLogger jsonlogger;
+
+
+
+	private MqttLogger mqttlogger;
 
 	protected SensorRegistry() {
 		sensors = new LinkedList<AbstractSensor>();
@@ -361,5 +366,13 @@ public class SensorRegistry {
 	}
 	public List<AbstractSensor> getSensors() {
 		return this.sensors;
+	}
+
+	public MqttLogger getMqttlogger() {
+		return mqttlogger;
+	}
+
+	public void setMqttlogger(MqttLogger mqttlogger) {
+		this.mqttlogger = mqttlogger;
 	}
 }

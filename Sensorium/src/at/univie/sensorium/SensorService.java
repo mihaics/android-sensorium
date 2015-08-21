@@ -34,6 +34,7 @@ import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import at.univie.sensorium.logging.JSONLogger;
+import at.univie.sensorium.logging.MqttLogger;
 import at.univie.sensorium.preferences.Preferences;
 import at.univie.sensorium.sensors.AbstractSensor;
 
@@ -108,6 +109,8 @@ public class SensorService extends Service {
 		registry.startXMLRPCInterface();
 		createJSONLoggerUploader();
 		registry.getJSONLogger().init(registry.getSensors());
+		registry.setMqttlogger(new MqttLogger());
+        registry.getMqttlogger().init(registry.getSensors());
 	}
 
 	private void createJSONLoggerUploader() {

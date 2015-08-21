@@ -1,6 +1,7 @@
 package at.univie.sensorium.logging;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.google.gson.Gson;
 
@@ -21,6 +22,7 @@ import mqtt.CloudConfig;
  */
 public class MqttLogger implements SensorChangeListener {
 
+    private static final String TAG = "MQTT" ;
     private List<AbstractSensor> sensors;
     private CloudConfig quickconfig;
     private MqttAndroidClient client;
@@ -50,6 +52,7 @@ public class MqttLogger implements SensorChangeListener {
 
     @Override
     public void sensorUpdated(AbstractSensor sensor) {
+        sendSensorData(sensor);
 
     }
 
@@ -57,7 +60,7 @@ public class MqttLogger implements SensorChangeListener {
         List<SensorValue> valuelist = sensor.getSensorValues();
         //check valuelist size
         String json = new Gson().toJson(valuelist );
-
+        Log.d(TAG, json.toString());
 
 
 
