@@ -1,3 +1,11 @@
+# MQTT #
+
+This version uses Eclipse Paho Mqtt libs to send data to IBM Quickstart:
+
+https://quickstart.internetofthings.ibmcloud.com/#/device/<ANDROID_ID>/sensor/
+
+
+
 # Sensorium #
 
 Sensorium is an Android Application that collects "sensor" information from your device ("Sensor data") and provides external interfaces to gather and process the data for scientific experiments. This is done in a privacy-preserving way. Only the data and only in the level of detail you allow will be made available.
