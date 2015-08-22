@@ -19,7 +19,7 @@ import at.univie.sensorium.sensors.AbstractSensor;
 import at.univie.sensorium.sensors.SensorChangeListener;
 import at.univie.sensorium.sensors.SensorValue;
 import mqtt.CloudConfig;
-
+import android.provider.Settings.Secure;
 /**
  * Sensorium, at.univie.sensorium.logging
  * Created by mihai on 8/19/15.
@@ -31,7 +31,10 @@ public class MqttLogger implements SensorChangeListener {
     private CloudConfig quickconfig;
     private MqttAndroidClient client;
     private Context mContext;
-    private String clientaddr = "abcabc";
+
+
+
+    private String android_id = "abcabc";
 
     public boolean ready;
 
@@ -47,7 +50,8 @@ public class MqttLogger implements SensorChangeListener {
     private void init() {
         quickconfig = initPrefsWithIBMQuickStart();
         mContext = SensorRegistry.getInstance().getContext();
-
+        android_id = Secure.getString(mContext.getContentResolver(),
+                Secure.ANDROID_ID);
 
 
         for (AbstractSensor sensor : sensors) {
@@ -68,7 +72,7 @@ public class MqttLogger implements SensorChangeListener {
     public boolean connect() {
         String url = quickconfig.brokerAddress + ":" + quickconfig.brokerPort;
 
-        client = createClient(mContext, url, quickconfig.deviceId+clientaddr);
+        client = createClient(mContext, url, quickconfig.deviceId+android_id);
 
         Log.d(TAG, "Cloud Broker URL : " + client.getServerURI());
         Log.d(TAG, "Client ID: "+client.getClientId());

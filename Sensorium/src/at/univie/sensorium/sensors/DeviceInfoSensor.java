@@ -31,6 +31,7 @@ import android.content.Context;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Build;
 import android.os.Handler;
+import android.provider.Settings;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import at.univie.sensorium.SensorRegistry;
@@ -50,6 +51,7 @@ public class DeviceInfoSensor extends AbstractSensor {
 	private SensorValue availMem;
 	private SensorValue memThreshold;
 	private SensorValue cpu;
+	private SensorValue android_id;
 	private MemoryInfo memoryInfo;
 	private Handler handler = new Handler();
 	private int scan_interval = 30; // sec
@@ -63,7 +65,8 @@ public class DeviceInfoSensor extends AbstractSensor {
 		tac = new SensorValue(SensorValue.UNIT.STRING, SensorValue.TYPE.TAC);
 		modelname = new SensorValue(SensorValue.UNIT.STRING, SensorValue.TYPE.MODEL_NAME);
 		vendorname = new SensorValue(SensorValue.UNIT.STRING, SensorValue.TYPE.VENDOR_NAME);
-		
+		android_id = new SensorValue(SensorValue.UNIT.STRING, SensorValue.TYPE.ANDROID_ID);
+
 		totalMem = new SensorValue(SensorValue.UNIT.MEM, SensorValue.TYPE.TOTAL_MEM);
 		availMem = new SensorValue(SensorValue.UNIT.MEM, SensorValue.TYPE.AVAL_MEM);
 		memThreshold = new SensorValue(SensorValue.UNIT.MEM, SensorValue.TYPE.THD_MEM);
@@ -102,7 +105,8 @@ public class DeviceInfoSensor extends AbstractSensor {
 		
 		vendorname.setValue(Build.MANUFACTURER);
 		modelname.setValue(Build.MODEL);
-		
+		android_id.setValue(Settings.Secure.getString(this.getContext().getContentResolver(),
+				Settings.Secure.ANDROID_ID));
 		ActivityManager activityManager = (ActivityManager) getContext().getSystemService(Context.ACTIVITY_SERVICE);
 		memoryInfo = new ActivityManager.MemoryInfo();
 		activityManager.getMemoryInfo(memoryInfo);

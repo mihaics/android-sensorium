@@ -42,7 +42,7 @@ import at.univie.sensorium.sensors.SensorValue;
 
 public class SensorRegistry {
 	
-	public static final String TAG = "Sensorium";
+	public static final String TAG = "MqttSensorium";
 
 	private static SensorRegistry instance = null;
 	
