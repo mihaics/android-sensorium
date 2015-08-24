@@ -1,6 +1,7 @@
 package at.univie.sensorium.logging;
 
 import android.content.Context;
+import android.provider.Settings.Secure;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -11,7 +12,6 @@ import org.eclipse.paho.client.mqttv3.IMqttToken;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 
-
 import java.util.List;
 
 import at.univie.sensorium.SensorRegistry;
@@ -19,7 +19,7 @@ import at.univie.sensorium.sensors.AbstractSensor;
 import at.univie.sensorium.sensors.SensorChangeListener;
 import at.univie.sensorium.sensors.SensorValue;
 import mqtt.CloudConfig;
-import android.provider.Settings.Secure;
+
 /**
  * Sensorium, at.univie.sensorium.logging
  * Created by mihai on 8/19/15.
@@ -27,16 +27,12 @@ import android.provider.Settings.Secure;
 public class MqttLogger implements SensorChangeListener {
 
     private static final String TAG = "MQTT";
+    public boolean ready;
     private List<AbstractSensor> sensors;
     private CloudConfig quickconfig;
     private MqttAndroidClient client;
     private Context mContext;
-
-
-
     private String android_id = "abcabc";
-
-    public boolean ready;
 
     public MqttLogger() {
 
@@ -48,35 +44,45 @@ public class MqttLogger implements SensorChangeListener {
     }
 
     private void init() {
-        quickconfig = initPrefsWithIBMQuickStart();
+        //quickconfig = initPrefsWithIBMQuickStart();
+        quickconfig = initPrefsWithMosquitto();
         mContext = SensorRegistry.getInstance().getContext();
         android_id = Secure.getString(mContext.getContentResolver(),
                 Secure.ANDROID_ID);
 
 
+        if (!ready)
+            ready = connect();
+
         for (AbstractSensor sensor : sensors) {
             sensor.addListener(this);
         }
-
-        ready = connect();
     }
 
     @Override
     public void sensorUpdated(AbstractSensor sensor) {
         if (client.isConnected()) {
             sendSensorData(sensor);
-        }
-        else connect();
+        } else connect();
     }
 
     public boolean connect() {
         String url = quickconfig.brokerAddress + ":" + quickconfig.brokerPort;
 
-        client = createClient(mContext, url, quickconfig.deviceId+android_id);
+        client = createClient(mContext, url, quickconfig.deviceId + android_id);
+
 
         Log.d(TAG, "Cloud Broker URL : " + client.getServerURI());
-        Log.d(TAG, "Client ID: "+client.getClientId());
-        MqttConnectOptions options = null;
+        Log.d(TAG, "Client ID: " + client.getClientId());
+        //MqttConnectOptions options = null;
+        MqttConnectOptions options = new MqttConnectOptions();
+        options.setPassword(quickconfig.password.toCharArray());
+        options.setCleanSession(quickconfig.cleanSession);
+        options.setUserName(quickconfig.username);
+        String uris[] = {url};
+        options.setServerURIs(uris);
+
+
 
         try {
             client.connect(options, new IMqttActionListener() {
@@ -93,7 +99,7 @@ public class MqttLogger implements SensorChangeListener {
                     ready = false;
                 }
             });
-        }catch (MqttException e) {
+        } catch (MqttException e) {
 
             Log.d(TAG, e.toString());
             return false;
@@ -102,9 +108,6 @@ public class MqttLogger implements SensorChangeListener {
         return true;
 
     }
-
-
-
 
 
     public boolean disconnect() {
@@ -127,7 +130,7 @@ public class MqttLogger implements SensorChangeListener {
 
     private void sendSensorData(AbstractSensor sensor) {
 
-        if(!client.isConnected()) return;
+        if (!client.isConnected()) return;
 
         List<SensorValue> valuelist = sensor.getSensorValues();
         //check valuelist size
@@ -135,12 +138,48 @@ public class MqttLogger implements SensorChangeListener {
 
         try {
             client.publish(quickconfig.publishTopic, json.getBytes(), 0, false);
-            Log.d(TAG, "Published: "+json.toString());
+            Log.d(TAG, "Published: " + json.toString());
         } catch (MqttException e) {
             Log.d(TAG, e.toString());
         }
 
 
+    }
+
+    public CloudConfig initPrefsWithIBMFoundation(){
+
+
+        CloudConfig ibmconfig = CloudConfig.getInstance();
+        ibmconfig.brokerAddress = "tcp://abnw49.messaging.internetofthings.ibmcloud.com";
+        ibmconfig.brokerPort = 1883;
+        //get an uniq id
+        ibmconfig.deviceId = "d:abnw49:\"Sensorium\":";
+        ibmconfig.password = "?bX7rrJI*JhCie!@(0";
+        ibmconfig.username = "use-token-auth";
+        ibmconfig.publishTopic = "iot-2/evt/status/fmt/json";
+        ibmconfig.service = 0;
+        ibmconfig.useSSL = false;
+        ibmconfig.cleanSession = true;
+
+        return ibmconfig;
+    }
+
+    public CloudConfig initPrefsWithMosquitto(){
+
+
+        CloudConfig ibmconfig = CloudConfig.getInstance();
+        ibmconfig.brokerAddress = "tcp://192.168.4.45";
+        ibmconfig.brokerPort = 1883;
+        //get an uniq id
+        ibmconfig.deviceId = "d:abnw49:\"Sensorium\":";
+        ibmconfig.password = "?bX7rrJI*JhCie!@(0";
+        ibmconfig.username = "use-token-auth";
+        ibmconfig.publishTopic = "iot-2/evt/status/fmt/json";
+        ibmconfig.service = 0;
+        ibmconfig.useSSL = false;
+        ibmconfig.cleanSession = true;
+
+        return ibmconfig;
     }
 
 
@@ -155,7 +194,7 @@ public class MqttLogger implements SensorChangeListener {
         ibmconfig.publishTopic = "iot-2/evt/status/fmt/json";
         ibmconfig.service = 0;
         ibmconfig.useSSL = false;
-        ibmconfig.cleanSession = true;
+        ibmconfig.cleanSession = false;
 
         return ibmconfig;
     }
