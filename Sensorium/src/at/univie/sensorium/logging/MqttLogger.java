@@ -137,7 +137,7 @@ public class MqttLogger implements SensorChangeListener {
         String json = new Gson().toJson(valuelist);
 
         try {
-            client.publish(quickconfig.publishTopic, json.getBytes(), 0, false);
+            client.publish(quickconfig.publishTopic+"/"+android_id, json.getBytes(), 0, false);
             Log.d(TAG, "Published: " + json.toString());
         } catch (MqttException e) {
             Log.d(TAG, e.toString());
@@ -168,16 +168,16 @@ public class MqttLogger implements SensorChangeListener {
 
 
         CloudConfig ibmconfig = CloudConfig.getInstance();
-        ibmconfig.brokerAddress = "tcp://192.168.4.45";
+        ibmconfig.brokerAddress = "tcp://sysop.go.ro";
         ibmconfig.brokerPort = 1883;
         //get an uniq id
-        ibmconfig.deviceId = "d:abnw49:\"Sensorium\":";
-        ibmconfig.password = "?bX7rrJI*JhCie!@(0";
-        ibmconfig.username = "use-token-auth";
-        ibmconfig.publishTopic = "iot-2/evt/status/fmt/json";
+        ibmconfig.deviceId = "d:Sensorium:";
+        ibmconfig.password = "sysop";
+        ibmconfig.username = "device";
+        ibmconfig.publishTopic = "iot-2/evt/status/";
         ibmconfig.service = 0;
         ibmconfig.useSSL = false;
-        ibmconfig.cleanSession = true;
+        ibmconfig.cleanSession = false;
 
         return ibmconfig;
     }
