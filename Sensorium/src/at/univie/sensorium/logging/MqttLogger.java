@@ -5,6 +5,7 @@ import android.provider.Settings.Secure;
 import android.util.Log;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 
 import org.eclipse.paho.android.service.MqttAndroidClient;
 import org.eclipse.paho.client.mqttv3.IMqttActionListener;
@@ -12,6 +13,7 @@ import org.eclipse.paho.client.mqttv3.IMqttToken;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 
+import java.util.Iterator;
 import java.util.List;
 
 import at.univie.sensorium.SensorRegistry;
@@ -83,7 +85,6 @@ public class MqttLogger implements SensorChangeListener {
         options.setServerURIs(uris);
 
 
-
         try {
             client.connect(options, new IMqttActionListener() {
                 @Override
@@ -133,11 +134,29 @@ public class MqttLogger implements SensorChangeListener {
         if (!client.isConnected()) return;
 
         List<SensorValue> valuelist = sensor.getSensorValues();
+        Iterator<SensorValue> it = valuelist.iterator();
+        //Log.d(TAG, "Element: " + "ANDROID_ID" + ":" + android_id);
+
+        JsonObject element = new JsonObject();
+        element.addProperty("ANDROID_ID", android_id);
+
+
+        while (it.hasNext()) {
+            SensorValue sv = it.next();
+            String type = sv.getType().toString();
+            String value = sv.getValueRepresentation();
+          //  Log.d(TAG, "Element: " + type + ":" + value);
+            element.addProperty(type, value);
+
+
+        }
+
+
         //check valuelist size
-        String json = new Gson().toJson(valuelist);
+        String json = new Gson().toJson(element);
 
         try {
-            client.publish(quickconfig.publishTopic+"/"+android_id, json.getBytes(), 0, false);
+            client.publish(quickconfig.publishTopic + android_id, json.getBytes(), 0, false);
             Log.d(TAG, "Published: " + json.toString());
         } catch (MqttException e) {
             Log.d(TAG, e.toString());
@@ -146,7 +165,7 @@ public class MqttLogger implements SensorChangeListener {
 
     }
 
-    public CloudConfig initPrefsWithIBMFoundation(){
+    public CloudConfig initPrefsWithIBMFoundation() {
 
 
         CloudConfig ibmconfig = CloudConfig.getInstance();
@@ -164,7 +183,7 @@ public class MqttLogger implements SensorChangeListener {
         return ibmconfig;
     }
 
-    public CloudConfig initPrefsWithMosquitto(){
+    public CloudConfig initPrefsWithMosquitto() {
 
 
         CloudConfig ibmconfig = CloudConfig.getInstance();
