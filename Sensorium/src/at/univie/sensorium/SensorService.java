@@ -107,8 +107,8 @@ public class SensorService extends Service {
 
 	private void startExtInterfaces() {
 		registry.startXMLRPCInterface();
-		createJSONLoggerUploader();
-		registry.getJSONLogger().init(registry.getSensors());
+		//createJSONLoggerUploader();
+		//registry.getJSONLogger().init(registry.getSensors());
 		registry.setMqttlogger(new MqttLogger());
         registry.getMqttlogger().init(registry.getSensors());
 	}
@@ -145,7 +145,8 @@ public class SensorService extends Service {
 	public void onDestroy() {
 		registry.getJSONLogger().finalizeLog();
 		((NotificationManager) getSystemService(NOTIFICATION_SERVICE)).cancel(NOTIFICATION);
-		Log.d(SensorRegistry.TAG, "SeattleSensors stopped");
+		Log.d(SensorRegistry.TAG, "MqttSensors stopped");
+		registry.getMqttlogger().disconnect();
 	}
 
 	public SensorRegistry getSensorRegistry() {

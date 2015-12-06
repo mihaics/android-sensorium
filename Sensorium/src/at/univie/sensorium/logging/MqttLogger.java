@@ -5,6 +5,7 @@ import android.provider.Settings.Secure;
 import android.util.Log;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import org.eclipse.paho.android.service.MqttAndroidClient;
@@ -139,17 +140,28 @@ public class MqttLogger implements SensorChangeListener {
 
         JsonObject element = new JsonObject();
         element.addProperty("ANDROID_ID", android_id);
-
+        element.addProperty("SENSOR", sensor.getName());
 
         while (it.hasNext()) {
             SensorValue sv = it.next();
-            String type = sv.getType().toString();
+            SensorValue.TYPE type = sv.getType();
             String value = sv.getValueRepresentation();
-          //  Log.d(TAG, "Element: " + type + ":" + value);
-            element.addProperty(type, value);
+            if(value.matches("\\d+(?:\\.\\d+)?")) {
+                element.addProperty(type.toString(), Double.parseDouble(value));
+            }
+            else
+            {
+                element.addProperty(type.toString(), value);
+            }
+            //element.addProperty(type.toString(), value.toString());
+           // Log.d(TAG, "Element: " + type + ":" + value);
+
+            }
 
 
-        }
+
+
+
 
 
         //check valuelist size
