@@ -24,9 +24,9 @@
 
     <application
         android:name="at.univie.sensorium.SensoriumApplication"
+        android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:allowBackup="true"
         android:theme="@style/AppTheme" >
         <activity
             android:name="at.univie.sensorium.SensoriumActivity"
@@ -42,7 +42,7 @@
             android:label="@string/title_activity_sensor_debug" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="at.univie.sensorium.SeattleSensorsActivity" />
+                android:value="at.univie.sensorium.SensoriumActivity" />
         </activity>
         <activity
             android:name="at.univie.sensorium.preferences.SensorPreferenceActivity"

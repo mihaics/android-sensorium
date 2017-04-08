@@ -31,17 +31,6 @@ import android.util.Log;
 public class SensoriumApplication extends Application {
 	private SensorService sensorService;
 	private boolean mIsBound = false;
-
-	public void onCreate() {
-		Log.d("SettleSensors", "application starting, binding service");
-		bindService();
-	}
-
-	public void onDestroy() {
-		Log.d(SensorRegistry.TAG, "application exiting, unbinding service");
-		unbindService();
-	}
-
 	private ServiceConnection mConnection = new ServiceConnection() {
 		public void onServiceConnected(ComponentName className, IBinder service) {
 			sensorService = ((SensorService.LocalBinder) service).getService();
@@ -53,6 +42,17 @@ public class SensoriumApplication extends Application {
 			Log.d(SensorRegistry.TAG, "service disconnected");
 		}
 	};
+
+    public void onCreate() {
+        super.onCreate();
+        Log.d("SettleSensors", "application starting, binding service");
+        bindService();
+    }
+
+    public void onDestroy() {
+        Log.d(SensorRegistry.TAG, "application exiting, unbinding service");
+        unbindService();
+    }
 
 	public void bindService() {
 		if (!mIsBound) {

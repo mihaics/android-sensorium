@@ -32,6 +32,7 @@ import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
+
 import at.univie.sensorium.R;
 import at.univie.sensorium.SensorRegistry;
 import at.univie.sensorium.privacy.Privacy;
@@ -74,8 +75,9 @@ public class SensorPreference extends Preference implements OnSeekBarChangeListe
 
 	@Override
 	protected View onCreateView(ViewGroup parent) {
-		LayoutInflater mInflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		RelativeLayout layout = (RelativeLayout) mInflater.inflate(R.layout.sensor_preference_item, parent, false);
+        super.onCreateView(parent);
+        LayoutInflater mInflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        RelativeLayout layout = (RelativeLayout) mInflater.inflate(R.layout.sensor_preference_item, parent, false);
 
 		TextView title = (TextView) layout.findViewById(R.id.seekBarTitle);
 		title.setText(sensor.getName());

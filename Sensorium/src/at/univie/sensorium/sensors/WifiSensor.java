@@ -1,10 +1,5 @@
 package at.univie.sensorium.sensors;
 
-import java.util.LinkedList;
-import java.util.List;
-
-import org.xmlrpc.android.XMLRPCSerializable;
-
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -13,13 +8,19 @@ import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.os.Handler;
 import android.util.Log;
+
+import org.xmlrpc.android.XMLRPCSerializable;
+
+import java.util.LinkedList;
+import java.util.List;
+
 import at.univie.sensorium.SensorRegistry;
 
 public class WifiSensor extends AbstractSensor {
-	
-	public static BroadcastReceiver wifiReceiver;
-	public static IntentFilter wifiFilter;
-	public static Intent wifiIntent;
+
+	private static BroadcastReceiver wifiReceiver;
+	private static IntentFilter wifiFilter;
+	private static Intent wifiIntent;
 	
 	private WifiManager mainWifi;
 	private List<ScanResult> wifiList = null;	
@@ -31,31 +32,30 @@ public class WifiSensor extends AbstractSensor {
 	private int defaultSize = 5;
 	private int totalSize;
 	private int scan_interval = 10; // sec	
-
-	public WifiSensor() {
-		super();
-		setName("Wifi Scan");
-		
-		wifiNetworks = new SensorValue(SensorValue.UNIT.LIST, SensorValue.TYPE.WIFI_NETWORK);
-		scannedDevices = new LinkedList<WifiDevice>();
-	}
-	
 	private Runnable scanTask = new Runnable() {
 		@Override
 		public void run() {
 			wifiFilter = new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
 			wifiIntent = getContext().getApplicationContext().registerReceiver(wifiReceiver, wifiFilter);
 			scannedDevices.clear();
-			mainWifi.startScan();		        		
+			mainWifi.startScan();
 			Log.d("scanTask", "restart scanning");
-			
+
 			handler.postDelayed(this, scan_interval*1000);
-		}		
+		}
 	};
+
+	public WifiSensor() {
+		super();
+		setName("Wifi Scan");
+
+		wifiNetworks = new SensorValue(SensorValue.UNIT.LIST, SensorValue.TYPE.WIFI_NETWORK);
+		scannedDevices = new LinkedList<WifiDevice>();
+	}
 	
 	@Override
 	protected void _enable() {
-		mainWifi =  (WifiManager) getContext().getSystemService(Context.WIFI_SERVICE);
+		mainWifi = (WifiManager) getContext().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
 		
 		wifiReceiver = new BroadcastReceiver() {
 			public void onReceive(Context context, Intent intent) {
